@@ -3,7 +3,7 @@
 A developer tool to make requests to a ReST based Web Application, also allowing storage of the request as well as the response
 
 = Http Verbs =
-  **GET* - to get information
-  **POST* - to post new information to the web application
-  **PUT* - to update information of a particular resource
-  **DELETE* - to delete
+  * *GET* - to get information
+  * *POST* - to post new information to the web application
+  * *PUT* - to update information of a particular resource
+  * *DELETE* - to delete
