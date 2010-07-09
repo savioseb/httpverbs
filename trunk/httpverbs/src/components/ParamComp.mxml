@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="100%"
+		  verticalAlign="middle"
+		  click="hgroup1_clickHandler()"
+		  >
+	<fx:Metadata>
+		[Event(name="delete", type="events.DeleteEvent")]
+	</fx:Metadata>
+	
+	
+	
+
+	<fx:Script>
+		<![CDATA[
+			import events.DeleteEvent;
+			
+			import mx.controls.Alert;
+			
+			[Bindable]
+			public var paramName:String="Click to Change";
+			
+			protected function paramName_clickHandler(event:MouseEvent):void {
+				if( currentState == "State1" ) {
+					currentState="EditParamName";
+					event.stopPropagation();
+					paramNameVal.setFocus();
+					paramNameVal.selectAll();
+				}
+			}
+			
+
+			protected function hgroup1_clickHandler():void {
+				if( currentState == "EditParamName" ) {
+					paramName = paramNameVal.text;
+					currentState = "State1";
+				}
+			}
+
+
+			protected function button1_clickHandler():void {
+				var deleteEvent:DeleteEvent= new DeleteEvent("delete", this );
+				dispatchEvent( deleteEvent );
+			}
+
+			protected function button1_keyDownHandler(event:KeyboardEvent):void {
+				if( event.keyCode == Keyboard.ENTER ) {
+					button1_clickHandler();
+				}
+			}
+
+
+			protected function paramNameVal_keyDownHandler(event:KeyboardEvent):void {
+				if( event.keyCode == Keyboard.ENTER ) {
+					hgroup1_clickHandler();
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:states>
+		<s:State name="State1"/>
+		<s:State name="EditParamName"/>
+	</s:states>
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:Label text="{paramName}"  
+			 includeIn="State1" 
+			 click="paramName_clickHandler(event)"
+			 />
+	
+	<s:TextInput id="paramNameVal" 
+				 text="{paramName}"  
+				 keyFocusChange="hgroup1_clickHandler()"
+				 focusOut="hgroup1_clickHandler()"
+				 includeIn="EditParamName"
+				 keyDown="paramNameVal_keyDownHandler(event)"
+				 />
+	
+	<s:TextInput id="paramValue" />
+	
+	<s:Button label="X" 
+			  click="button1_clickHandler()"
+			  keyDown="button1_keyDownHandler(event)"
+			  />
+	
+</s:HGroup>
