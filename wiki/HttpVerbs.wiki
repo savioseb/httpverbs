@@ -1,3 +1,4 @@
+#labels Featured
 = Introduction =
 
 A developer tool to make requests to a ReST based Web Application, also allowing storage of the request as well as the response
