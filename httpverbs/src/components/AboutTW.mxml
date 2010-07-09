@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="100%" height="100%"
+			   title="About"
+			   >
+	
+	<s:layout>
+		<s:VerticalLayout paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10" horizontalAlign="left"/>
+	</s:layout>
+
+	<fx:Script>
+		<![CDATA[
+			import flash.net.navigateToURL;
+			
+			protected function blog_clickHandler():void
+			{
+				var urlRequest:URLRequest = new URLRequest("mailto:savioseb@gmail.com");
+				navigateToURL(urlRequest);
+			}
+
+			protected function linkedin_clickHandler():void
+			{
+				// TODO Auto-generated method stub
+			}
+			
+			private function isEnter(event:KeyboardEvent ):Boolean {
+				if( event.keyCode == Keyboard.ENTER ) {
+					return true;
+				}
+				return false;
+			}
+
+
+			protected function mail_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter(event) ) {
+					mail_clickHandler();
+				}
+			}
+
+
+			protected function twitter_clickHandler():void {
+				var urlRequest:URLRequest = new URLRequest("http://twitter.com");
+				navigateToURL(urlRequest);
+			}
+
+
+			protected function linkedin_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter(event) ) {
+					linkedin_clickHandler();
+				}
+			}
+
+
+			protected function twitter_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter(event) ) {
+					twitter_clickHandler();
+				}
+			}
+
+
+			protected function blog_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter(event) ) {
+					blog_clickHandler();
+				}
+			}
+
+
+			protected function mail_clickHandler():void {
+				var urlRequest:URLRequest = new URLRequest("mailto:savioseb@gmail.com");
+				navigateToURL(urlRequest);
+			}
+
+		]]>
+	</fx:Script>
+
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			
+			private const para1:String = "Http Verbs 1.0 is a developer tool. " +
+				"It helps developers test ReST-based application. " +
+				"The developer can use the entire HTTP vocabulary available to make the application ReST-ful and expressive.";
+			
+			private const para2:String = " - Storage of HTTP Request\n\t" +
+				"The Http request is stored in a JSON format text file. This can be later re-used multiple times for testing." +
+				"\n - Storage of Response in Text File";
+			
+			protected function titlewindow1_closeHandler(event:CloseEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	<s:TextArea 
+		width="100%"
+		height="50"
+		editable="false" 
+		text="{para1}" 
+		borderColor="#FFFFFF"
+		/>
+	
+	<s:Label
+		text="Key Features"
+		 fontSize="19"/>
+	
+	<s:TextArea 
+		width="100%"
+		height="100"
+		text="{para2}"  
+		borderColor="#FFFFFF"/>
+	
+	
+	<s:Label
+		text="Contact Info"
+		fontSize="19"/>
+	
+	<s:HGroup verticalAlign="middle" gap="0">
+		<s:Label text="savio sebastian"  fontWeight="bold" paddingRight="5"/>
+		<s:Label text="email:" />
+		<mx:LinkButton label="savioseb@gmail.com" click="mail_clickHandler()"  keyDown="mail_keyDownHandler(event)" fontWeight="bold"/>
+		<s:Label text="linkedin:" />
+		<mx:LinkButton label="http://linkedin.com/in/savioseb" click="linkedin_clickHandler()" keyDown="linkedin_keyDownHandler(event)" fontWeight="bold"/>
+		
+	</s:HGroup>
+	
+	<s:HGroup verticalAlign="middle" gap="0" paddingTop="0">
+		<s:Label text="twitter" />
+		<mx:LinkButton label="http://twitter.com/savioseb" click="twitter_clickHandler()"  keyDown="twitter_keyDownHandler(event)" fontWeight="bold"/>
+		<s:Label text="blog" />
+		<mx:LinkButton label="http://theAfricanCall.blogspot.com" click="blog_clickHandler()"  keyDown="blog_keyDownHandler(event)" fontWeight="bold"/>
+	</s:HGroup>
+	
+	
+</s:TitleWindow>

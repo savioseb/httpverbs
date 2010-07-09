@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow
+	title="Select File"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	width="100%"
+	height="100%"
+	creationComplete="fileSelect.setFocus()"
+	close="dispatchBack()"
+	>
+	
+	<fx:Metadata>
+		[Event(name="back", type="flash.events.Event")]
+		[Event(name="loadWithParams", type="events.LoadWithParametersEvent")]
+	</fx:Metadata>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import classes.FileSelectAction;
+			import classes.HttpRequest;
+			import classes.NameValuePair;
+			
+			import com.adobe.serialization.json.JSON;
+			import com.adobe.serialization.json.JSONEncoder;
+			
+			import events.LoadWithParametersEvent;
+			
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			private var action:String = "Open";
+			
+			private var httpVerbs:HttpVerbs = null;
+			
+			private var isLoad:Boolean = true;
+			
+			public function init( action:String, httpVerbs:HttpVerbs ):void {
+				this.action = action;
+				this.httpVerbs = httpVerbs;
+				if( action == FileSelectAction.OPEN ) {
+					isLoad = true;
+				} else {
+					isLoad = false;
+				}
+			} 
+			
+			private function convertHttpVerbsToHttpRequestObject():String {
+				var httpRequest:HttpRequest = new HttpRequest();
+				httpRequest.url =  httpVerbs.urlTextInp.text;
+				httpRequest.method = httpVerbs.methodComboBox.selectedIndex;
+				if( !httpVerbs.isParamsEmpty() ) {
+					httpRequest.params = new ArrayList();
+					for( var i:int = 0; i < httpVerbs.paramsGrp.numElements; i++ ) {
+						var paramComp:ParamComp = httpVerbs.paramsGrp.getElementAt(i) as ParamComp;
+						var nameValuePair:NameValuePair = new NameValuePair();
+						nameValuePair.name = paramComp.paramName;
+						nameValuePair.value = paramComp.paramValue.text;
+						httpRequest.params.addItem( nameValuePair );
+					}
+				}
+				var jsonString:String = JSON.encode(httpRequest);
+				return jsonString;
+			}
+			
+			
+			
+			private function saveFile(file:File):void {
+				var strToBeSaved:String;
+				if( action == FileSelectAction.SAVE ) {
+					strToBeSaved = convertHttpVerbsToHttpRequestObject();
+				} else {
+					strToBeSaved = httpVerbs.responseTxtArea.text;
+				}
+				var stream:FileStream = new FileStream()
+				stream.open(file, FileMode.WRITE);
+				stream.writeUTFBytes(strToBeSaved);
+				stream.close();
+				dispatchBack();
+			}
+			
+			
+
+			
+			private function saveFileCheck(file:File):void {
+				if( file.exists ) {
+					// SAVE - OVERRITE FILE? 
+					Alert.show( "Do you want to overrite: " + selectedFileTxtInp.text + "?", 
+						"Confirm",
+						Alert.YES |Alert.NO, 
+						null,
+						handleAlert,
+						null,
+						Alert.YES);
+				} else {
+					saveFile(file);
+				}
+			}
+			
+			private function loadFile(file:File):void {
+				var stream:FileStream = new FileStream();
+				stream.open(file, FileMode.READ);
+				var str:String = stream.readUTFBytes(stream.bytesAvailable);
+				stream.close();
+				var httpRequest:Object = JSON.decode(str);
+				httpVerbs.urlTextInp.text = httpRequest.url;
+				httpVerbs.methodComboBox.selectedIndex = httpRequest.method;
+				if( null != httpRequest.params ) {
+					var loadWithParametersEvent:LoadWithParametersEvent = new LoadWithParametersEvent(httpRequest.params);
+					dispatchEvent(loadWithParametersEvent);
+					
+				} else {
+					if( !httpVerbs.isParamsEmpty() ) {
+						httpVerbs.paramsGrp.removeAllElements();
+					}
+					httpVerbs.backToState = "State1";
+					dispatchBack();
+				}
+			} 
+			
+			private function dispatchBack():void {
+				var backEvent:Event = new Event( "back" );
+				dispatchEvent(backEvent );
+			}
+			
+			
+			private function loadFileCheck(file:File):void {
+				if( !file.exists ) {
+					// LOAD - FILE DOES NOT EXIST
+					Alert.show( selectedFileTxtInp.text + " does not exist!" , "Incorrect Selection" );
+				} else {
+					loadFile(file);
+				}
+			}
+
+			protected function actionBtn_clickHandler():void {
+				var file:File = File.desktopDirectory.resolvePath(selectedFileTxtInp.text);
+				if( file.isDirectory ) {
+					Alert.show( selectedFileTxtInp.text + " is a directory!" , "Incorrect Selection" );
+				} else if( !isLoad ) {
+					// SAVE
+					saveFileCheck(file);
+				} else if( isLoad ) {
+					// LOAD
+					loadFileCheck(file);
+				}
+			}
+
+			
+			// handle the Alert control button click
+			public function handleAlert( event:Object ):void {
+				if( event.detail == Alert.YES ) {
+					var file:File = File.desktopDirectory.resolvePath(selectedFileTxtInp.text);
+					saveFile(file);
+				}
+			}
+
+
+			protected function selectedFileTxtInp_keyDownHandler(event:KeyboardEvent):void {
+				if( event.keyCode == Keyboard.ENTER ) {
+					fileSelect.openPaths = new Array( selectedFileTxtInp.text );
+					fileSelect.selectedPath = selectedFileTxtInp.text;
+				}
+				 
+			}
+
+
+			protected function actionBtn_keyDownHandler(event:KeyboardEvent):void {
+				if( event.keyCode == Keyboard.ENTER ) {
+					actionBtn_clickHandler();
+				}
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:VGroup 
+		width="100%"
+		height="100%" >
+		
+		<mx:FileSystemTree
+			id="fileSelect"
+			width="100%"
+			height="100%"
+			openPaths="{File.documentsDirectory.nativePath}"
+			selectedPath="{File.documentsDirectory.nativePath}"
+			 fontSize="11"/>
+		
+		<s:HGroup verticalAlign="middle" >
+			
+			<s:Label text="Selected File" />
+			
+			<s:TextInput id="selectedFileTxtInp" text="{fileSelect.selectedPath}" width="500" keyDown="selectedFileTxtInp_keyDownHandler(event)"/>
+			
+			<s:Button label="{action}" click="actionBtn_clickHandler()" keyDown="actionBtn_keyDownHandler(event)"/>
+			
+			
+		</s:HGroup>
+		
+	
+	</s:VGroup>
+	
+</s:TitleWindow>

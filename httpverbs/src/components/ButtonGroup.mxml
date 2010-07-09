@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  width="100%"
+		  verticalAlign="middle"
+		  >
+	
+	<fx:Metadata>
+		[Event(name="send", type="flash.events.Event")]
+		[Event(name="save", type="flash.events.Event")]
+		[Event(name="load", type="flash.events.Event")]
+		[Event(name="about", type="flash.events.Event")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.net.navigateToURL;
+			
+			
+			private function sendbutton_clickHandler():void {
+				var sendEvent:Event = new Event( "send" );
+				dispatchEvent(sendEvent);
+			}
+
+			protected function load_clickHandler():void {
+				var sendEvent:Event = new Event( "load" );
+				dispatchEvent(sendEvent);
+			}
+
+
+			protected function save_clickHandler():void {
+				var sendEvent:Event = new Event( "save" );
+				dispatchEvent(sendEvent);
+			}
+
+			private function isEnter( event:KeyboardEvent ):Boolean {
+				if( event.keyCode == Keyboard.ENTER ) {
+					return true;
+				}
+				return false;
+			}
+
+			protected function send_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter( event ) ) {
+					sendbutton_clickHandler();
+				}
+			}
+			
+			protected function save_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter( event ) ) {
+					save_clickHandler();
+				}
+			}
+			
+			protected function load_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter( event ) ) {
+					load_clickHandler();
+				}
+			}
+
+
+			protected function help_clickHandler():void {
+				var urlRequest:URLRequest = new URLRequest("http://www.google.com/");
+				navigateToURL(urlRequest);
+			}
+
+
+			protected function help_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter( event ) ) {
+					help_clickHandler();
+				}
+			}
+
+
+			protected function about_clickHandler():void {
+				var sendEvent:Event = new Event( "about" );
+				dispatchEvent(sendEvent);
+			}
+
+
+			protected function about_keyDownHandler(event:KeyboardEvent):void {
+				if( isEnter( event ) ) {
+					about_clickHandler();
+				}
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:Button label="Send" click="sendbutton_clickHandler()" keyDown="send_keyDownHandler(event)"/>
+	
+	<mx:VRule height="20" />
+	
+	<s:Button label="Load" click="load_clickHandler()" keyDown="load_keyDownHandler(event)" />
+	
+	<s:Button label="Save" click="save_clickHandler()" keyDown="save_keyDownHandler(event)"/>
+	
+	<mx:VRule height="20" />
+	
+	<s:Button label="Help" click="help_clickHandler()" keyDown="help_keyDownHandler(event)"/>
+	
+	<s:Button label="About" click="about_clickHandler()" keyDown="about_keyDownHandler(event)"/>
+	
+</s:HGroup>
